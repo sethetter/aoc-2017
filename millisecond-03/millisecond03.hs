@@ -1,37 +1,45 @@
 module Millisecond03 where
 
-data Direction = R | U | L | D
+import Data.List
+import qualified Data.Map.Strict as M
 
-spMemPositionFor :: Int -> (Int, Int)
-spMemPositionFor i = go 1 1 1 R True (0, 0)
-  where go :: Int -> Int -> Int -> Direction -> Bool -> (Int, Int) -> (Int, Int)
-        go c steps 0 d firstTurn coord = if c == i then coord else
-          if firstTurn then go (c + 1) steps       steps newDir False nextCoord
-                       else go (c + 1) (steps + 1) steps newDir True  nextCoord
-            where nextCoord = newCoord (nextDir d) coord
-                  newDir    = nextDir d
-        go c steps step d firstTurn coord =
-          if c == i then coord
-                    else go (c + 1) steps (step - 1) d firstTurn (newCoord d coord)
+data Direction = R | U | L | D deriving (Show)
 
-nextDir :: Direction -> Direction
-nextDir R = U
-nextDir U = L
-nextDir L = D
-nextDir D = R
+move :: (Int, Int) -> Direction -> (Int, Int)
+move (x, y) R = (x + 1, y)
+move (x, y) U = (x, y + 1)
+move (x, y) L = (x - 1, y)
+move (x, y) D = (x, y - 1)
 
-newCoord :: Direction -> (Int, Int) -> (Int, Int)
-newCoord d (x, y) = case d of
-  R -> (x + 1, y)
-  U -> (x, y - 1)
-  L -> (x - 1, y)
-  D -> (x, y + 1)
+directions :: [Direction]
+directions = [R, U, L, D]
 
-distanceFromZero :: (Int, Int) -> Int
-distanceFromZero (x, y) = x + y
+moves :: [Direction]
+moves = concat $ zipWith replicate (concat $ zipWith (\a b -> [a,b]) [1..] [1..]) (cycle directions)
+
+part1 :: Int -> Int
+part1 i = (\(x, y) -> x + y) $ last $ take i path
+  where path :: [(Int, Int)]
+        path = snd $ mapAccumL (\c d -> (move c d, move c d)) (-1, 0) moves
+
+buildSpiralMapUntil :: Int -> (M.Map (Int, Int) Int) -> (Int, Int) -> [Direction] -> Int
+buildSpiralMapUntil _ _ _ [] = 0
+buildSpiralMapUntil i m c@(x, y) (d:ds) =
+  case sumAdjacents > i of
+    True -> sumAdjacents
+    False -> buildSpiralMapUntil i (M.insert c sumAdjacents m) nextCoord ds
+  where nextCoord = move c d
+        adjacents = [ (x', y') | x' <- [(x-1)..(x+1)], y' <- [(y-1)..(y+1)], (x, y) /= (x', y') ]
+        sumAdjacents = sum $ map (\c -> case M.lookup c m of
+                                              Nothing -> 0
+                                              Just i' -> i' ) adjacents
+
+part2 :: Int -> Int
+part2 i = buildSpiralMapUntil i (M.singleton (0, 0) 1) (1, 0) $ tail moves
 
 main :: IO ()
 main = do
-  let coord = spMemPositionFor 361527
-      answer = distanceFromZero coord
-   in print answer
+  -- let answer1 = part1 361527
+  --  in print answer1
+  let answer2 = part2 361527
+   in print answer2
