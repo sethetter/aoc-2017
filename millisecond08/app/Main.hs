@@ -8,5 +8,6 @@ main = do
   inputStr <- readFile "input.txt"
   let input = splitOn "\n" $ init inputStr
       registers = processInstructions input
-      largestValue = findLargestValue registers
-   in print largestValue
+      -- largestValue = findLargestValue registers
+      part2 = largestEver registers
+   in print part2
