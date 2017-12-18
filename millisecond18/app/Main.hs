@@ -6,5 +6,6 @@ main :: IO ()
 main = do
   inputStr <- readFile "input.txt"
   let input = lines $ init inputStr
-      answer1 = firstReceivedSound input
-   in print answer1
+      -- answer1 = firstReceivedSound input
+      answer2 = howManyDidP1Send input
+   in print answer2
