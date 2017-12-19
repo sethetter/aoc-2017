@@ -1,20 +1,20 @@
 module Lib
-    ( findPath
+    ( countSteps
     , getAt
     ) where
 
 import Data.List
 
-findPath :: [String] -> String
-findPath grid = go (initX, 0) (0, 1) ""
+countSteps :: [String] -> Int
+countSteps grid = go (initX, 0) (0, 1) 0
   where initX = getInitX grid
-        go :: (Int, Int) -> (Int, Int) -> String -> String
-        go c@(x, y) d@(mx, my) letters
-          | charAt == '|' || charAt == '-' = go (x + mx, y + my) d letters
-          | charAt `elem` ['A'..'Z']       = go (x + mx, y + my) d $ letters ++ [charAt]
+        go :: (Int, Int) -> (Int, Int) -> Int -> Int
+        go c@(x, y) d@(mx, my) count
+          | charAt == '|' || charAt == '-' = go (x + mx, y + my) d (count + 1)
+          | charAt `elem` ['A'..'Z']       = go (x + mx, y + my) d (count + 1)
           | charAt == '+'                  = let newD@(mx', my') = getNewD grid c d
-                                              in go (x + mx', y + my') newD letters
-          | otherwise                      = letters
+                                              in go (x + mx', y + my') newD (count+1)
+          | otherwise                      = count
           where charAt = getAt c grid
 
 getInitX :: [String] -> Int

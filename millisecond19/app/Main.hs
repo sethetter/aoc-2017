@@ -7,5 +7,5 @@ main :: IO ()
 main = do
   inputStr <- readFile "input.txt"
   let input = splitOn "\n" $ init inputStr
-      path = findPath input
-   in print $ path
+      count = countSteps input
+   in print $ count
