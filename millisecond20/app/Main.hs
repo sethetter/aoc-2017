@@ -8,5 +8,6 @@ main = do
   inputStr <- readFile "input.txt"
   let input = splitOn "\n" $ init inputStr
       particles = parseParticles input
-      closest = closestToZeroOverXSteps 2000 particles
-   in print $ closest
+      -- closest = closestToZeroOverXSteps 1000 particles
+      leftAfter = last $ map length . take 100 $ iterate (removeCollisions . stepParticles) particles
+   in print $ leftAfter

@@ -1,6 +1,8 @@
 module Lib
     ( parseParticles
     , closestToZeroOverXSteps
+    , stepParticles
+    , removeCollisions
     ) where
 
 import Data.List.Split (splitOn)
@@ -10,7 +12,7 @@ data Particle = Particle
   { pos :: (Int, Int, Int)
   , vel :: (Int, Int, Int)
   , acc :: (Int, Int, Int)
-  }
+  } deriving (Eq, Show)
 
 parseParticles :: [String] -> [Particle]
 parseParticles = map parseParticle
@@ -25,6 +27,14 @@ closestToZeroOverXSteps steps = go 0 []
         go step maxes particles
           | step == steps = getMostOccurring maxes
           | otherwise = go (step + 1) (closestToZero particles : maxes) (stepParticles particles)
+
+removeCollisions :: [Particle] -> [Particle]
+removeCollisions = concat . filter (\g -> length g == 1) . groupBy collidesWith
+
+collidesWith :: Particle -> Particle -> Bool
+collidesWith Particle { pos = p1 }
+             Particle { pos = p2 }
+  = p1 == p2
 
 closestToZero :: [Particle] -> Int
 closestToZero [] = -1
@@ -43,7 +53,7 @@ stepParticle Particle { pos = (px, py, pz)
                       , vel = (vx, vy, vz)
                       , acc = (ax, ay, az)
                       } =
-  Particle { pos = (px + vx, py + vy, pz + vz)
+  Particle { pos = (px + (vx + ax), py + (vy + ay), pz + (vz + az))
            , vel = (vx + ax, vy + ay, vz + az)
            , acc = (ax, ay, az) }
 
