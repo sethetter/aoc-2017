@@ -10,5 +10,4 @@ main = do
       grid = parseGrid input
       carrier = initCarrier grid
       burstXTimes x = (iterate doBurst (grid, carrier)) !! x
-   in print $ getCount . snd $ burstXTimes 10000
-   -- in print $ grid
+   in print $ getCount . snd $ burstXTimes 10000000
