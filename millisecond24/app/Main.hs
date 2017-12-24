@@ -10,4 +10,5 @@ main = do
   --  in print $ maximumBy (\a b -> compare (bridgeStrength a) (bridgeStrength b)) $ validBridges testComponents
   let input = lines $ inputStr
       components = parseComponents input
-   in print $ strongestBridge $ validBridges components
+   -- in print $ strongestBridge $ validBridges components
+   in print $ strongestBridge . longestBridges $ validBridges components

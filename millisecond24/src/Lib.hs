@@ -3,6 +3,7 @@ module Lib
     , validBridges
     , strongestBridge
     , bridgeStrength
+    , longestBridges
     ) where
 
 import Data.List.Split (splitOn)
@@ -15,6 +16,10 @@ parseComponents = map (\s -> let p1 = read (head $ splitOn "/" s) :: Int
 
 strongestBridge :: [[(Int, Int)]] -> Int
 strongestBridge = maximum . map bridgeStrength
+
+longestBridges :: [[(Int, Int)]] -> [[(Int, Int)]]
+longestBridges bs = let maxLength = maximum . map (length) $ bs
+                     in filter (\b -> length b == maxLength) bs
 
 bridgeStrength :: [(Int, Int)] -> Int
 bridgeStrength [] = 0
